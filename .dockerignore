@@ -1,0 +1,24 @@
+# Never send secrets, local state or host-built environments to the Docker daemon.
+# A host .venv or node_modules copied into an image overwrites the Linux one with
+# binaries for the wrong platform; .env and *.pem would leak into build layers.
+
+.git
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.data
+.deploy
+backups
+
+**/.venv
+**/node_modules
+**/__pycache__
+**/*.py[cod]
+**/.mypy_cache
+**/.pytest_cache
+**/.ruff_cache
+**/dist
+**/*.tsbuildinfo
+evals/reports

@@ -1,0 +1,49 @@
+# Caddy terminates TLS, serves the SPA, and proxies /api to FastAPI.
+# {$SITE_DOMAIN} and {$ACME_EMAIL} come from the environment on the VPS.
+
+{
+	email {$ACME_EMAIL}
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+{$SITE_DOMAIN:localhost} {
+	encode zstd gzip
+
+	header {
+		# The SPA renders model- and document-derived text. Nothing it receives
+		# may execute, so the policy is restrictive by default.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' {$OIDC_ORIGIN:https://*.auth0.com}; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	handle /api/* {
+		uri strip_prefix /api
+		reverse_proxy api:8000 {
+			header_up X-Request-Id {http.request.header.X-Request-Id}
+		}
+	}
+
+	handle /health/* {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+		format json
+	}
+}

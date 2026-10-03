@@ -1,0 +1,23 @@
+{
+  "name": "opspilot",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "stack": "uv run --project apps/api python scripts/dev.py",
+    "dev": "pnpm --filter @opspilot/web dev",
+    "build": "pnpm --filter @opspilot/contracts build && pnpm --filter @opspilot/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "contracts:generate": "uv run --project apps/api python scripts/export_openapi.py && pnpm --filter @opspilot/contracts generate",
+    "contracts:check": "uv run --project apps/api python scripts/export_openapi.py && pnpm --filter @opspilot/contracts check",
+    "eval": "uv run --project apps/api python -m evals.harness"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  }
+}

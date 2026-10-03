@@ -1,0 +1,4208 @@
+{
+  "components": {
+    "schemas": {
+      "ActionStatus": {
+        "enum": [
+          "pending",
+          "approved",
+          "rejected",
+          "expired",
+          "executing",
+          "succeeded",
+          "failed",
+          "reconciliation_required"
+        ],
+        "title": "ActionStatus",
+        "type": "string"
+      },
+      "ActionType": {
+        "description": "The complete set of writes the system can propose. One member, on purpose.",
+        "enum": [
+          "create_followup_task"
+        ],
+        "title": "ActionType",
+        "type": "string"
+      },
+      "ActionView": {
+        "properties": {
+          "action_type": {
+            "$ref": "#/components/schemas/ActionType"
+          },
+          "assignee_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision_expired": {
+            "title": "Decision Expired",
+            "type": "boolean"
+          },
+          "downstream_task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Downstream Task Id"
+          },
+          "execution_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Error"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "payload_hash": {
+            "title": "Payload Hash",
+            "type": "string"
+          },
+          "payload_valid": {
+            "title": "Payload Valid",
+            "type": "boolean"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "source_changed": {
+            "title": "Source Changed",
+            "type": "boolean"
+          },
+          "source_record_id": {
+            "format": "uuid",
+            "title": "Source Record Id",
+            "type": "string"
+          },
+          "source_record_type": {
+            "title": "Source Record Type",
+            "type": "string"
+          },
+          "source_record_version": {
+            "title": "Source Record Version",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ActionStatus"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "action_type",
+          "status",
+          "payload",
+          "payload_hash",
+          "source_record_type",
+          "source_record_id",
+          "source_record_version",
+          "source_changed",
+          "expires_at",
+          "created_at",
+          "payload_valid",
+          "decision_expired",
+          "downstream_task_id",
+          "execution_error",
+          "assignee_name"
+        ],
+        "title": "ActionView",
+        "type": "object"
+      },
+      "Body_upload_document_documents_post": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "effective_from": {
+            "format": "date",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "title",
+          "effective_from"
+        ],
+        "title": "Body_upload_document_documents_post",
+        "type": "object"
+      },
+      "CreateRunRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "order_number": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "pattern": "^[A-Za-z0-9\\-_]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Number"
+          },
+          "request_text": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Request Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_text"
+        ],
+        "title": "CreateRunRequest",
+        "type": "object"
+      },
+      "CreateTaskRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "assignee_id": {
+            "format": "uuid",
+            "title": "Assignee Id",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "due_at": {
+            "format": "date-time",
+            "title": "Due At",
+            "type": "string"
+          },
+          "order_id": {
+            "format": "uuid",
+            "title": "Order Id",
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_id",
+          "order_id",
+          "assignee_id",
+          "due_at",
+          "description"
+        ],
+        "title": "CreateTaskRequest",
+        "type": "object"
+      },
+      "DecisionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "payload_hash": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Payload Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload_hash"
+        ],
+        "title": "DecisionRequest",
+        "type": "object"
+      },
+      "DevTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "DevTokenRequest",
+        "type": "object"
+      },
+      "DevTokenResponse": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "organization_id": {
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "token_type": {
+            "default": "Bearer",
+            "title": "Token Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in",
+          "organization_id",
+          "role"
+        ],
+        "title": "DevTokenResponse",
+        "type": "object"
+      },
+      "DocumentStatus": {
+        "enum": [
+          "pending",
+          "indexing",
+          "active",
+          "failed",
+          "deleted"
+        ],
+        "title": "DocumentStatus",
+        "type": "string"
+      },
+      "DocumentView": {
+        "properties": {
+          "active_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Version"
+          },
+          "chunk_count": {
+            "title": "Chunk Count",
+            "type": "integer"
+          },
+          "effective_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective From"
+          },
+          "embedding_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Mode"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "latest_effective_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Effective From"
+          },
+          "latest_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Version"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentStatus"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "active_version",
+          "effective_from",
+          "chunk_count",
+          "updated_at"
+        ],
+        "title": "DocumentView",
+        "type": "object"
+      },
+      "FeedbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "correction_text": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction Text"
+          },
+          "failure_class": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Class"
+          },
+          "usefulness": {
+            "$ref": "#/components/schemas/Usefulness"
+          }
+        },
+        "required": [
+          "usefulness"
+        ],
+        "title": "FeedbackRequest",
+        "type": "object"
+      },
+      "FeedbackView": {
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "correction_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction Text"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "failure_class": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Class"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "usefulness": {
+            "$ref": "#/components/schemas/Usefulness"
+          }
+        },
+        "required": [
+          "usefulness",
+          "failure_class",
+          "correction_text",
+          "created_at",
+          "author",
+          "mine"
+        ],
+        "title": "FeedbackView",
+        "type": "object"
+      },
+      "Finding": {
+        "additionalProperties": false,
+        "description": "One claim, with the evidence that supports it.",
+        "properties": {
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "kind": {
+            "pattern": "^(observed_fact|inference)$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 600,
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statement",
+          "kind"
+        ],
+        "title": "Finding",
+        "type": "object"
+      },
+      "FollowupTaskView": {
+        "description": "A task in the SIMULATED ERP, created only by an approved proposal.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "due_at": {
+            "format": "date-time",
+            "title": "Due At",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "evidence_id",
+          "description",
+          "status",
+          "due_at",
+          "created_at"
+        ],
+        "title": "FollowupTaskView",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "IncompleteReason": {
+        "description": "Why a run stopped short. A run can be useful and incomplete at the same time.",
+        "enum": [
+          "budget_exhausted",
+          "turn_limit",
+          "tool_limit",
+          "deadline",
+          "provider_unavailable",
+          "insufficient_evidence",
+          "cancelled"
+        ],
+        "title": "IncompleteReason",
+        "type": "string"
+      },
+      "InvestigationRef": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incomplete_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incomplete Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "incomplete_reason",
+          "created_at"
+        ],
+        "title": "InvestigationRef",
+        "type": "object"
+      },
+      "MeResponse": {
+        "properties": {
+          "business_date": {
+            "format": "date",
+            "title": "Business Date",
+            "type": "string"
+          },
+          "can_approve": {
+            "title": "Can Approve",
+            "type": "boolean"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "membership_id": {
+            "format": "uuid",
+            "title": "Membership Id",
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "membership_id",
+          "organization_id",
+          "subject",
+          "email",
+          "display_name",
+          "role",
+          "can_approve",
+          "business_date"
+        ],
+        "title": "MeResponse",
+        "type": "object"
+      },
+      "MetricsSummary": {
+        "properties": {
+          "approval_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Rate"
+          },
+          "by_error_code": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Error Code",
+            "type": "object"
+          },
+          "by_incomplete_reason": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Incomplete Reason",
+            "type": "object"
+          },
+          "by_model": {
+            "items": {
+              "$ref": "#/components/schemas/ModelBreakdown"
+            },
+            "title": "By Model",
+            "type": "array"
+          },
+          "cancelled": {
+            "title": "Cancelled",
+            "type": "integer"
+          },
+          "citation_support_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Citation Support Ratio"
+          },
+          "citations_cited": {
+            "title": "Citations Cited",
+            "type": "integer"
+          },
+          "citations_unsupported": {
+            "title": "Citations Unsupported",
+            "type": "integer"
+          },
+          "completed": {
+            "title": "Completed",
+            "type": "integer"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "executions_failed": {
+            "title": "Executions Failed",
+            "type": "integer"
+          },
+          "executions_succeeded": {
+            "title": "Executions Succeeded",
+            "type": "integer"
+          },
+          "failed": {
+            "title": "Failed",
+            "type": "integer"
+          },
+          "feedback": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Feedback",
+            "type": "object"
+          },
+          "in_flight": {
+            "title": "In Flight",
+            "type": "integer"
+          },
+          "incomplete": {
+            "title": "Incomplete",
+            "type": "integer"
+          },
+          "mean_cost_usd": {
+            "title": "Mean Cost Usd",
+            "type": "number"
+          },
+          "mean_duration_ms": {
+            "title": "Mean Duration Ms",
+            "type": "integer"
+          },
+          "mean_provider_latency_ms": {
+            "title": "Mean Provider Latency Ms",
+            "type": "integer"
+          },
+          "needs_review": {
+            "title": "Needs Review",
+            "type": "integer"
+          },
+          "p95_cost_usd": {
+            "title": "P95 Cost Usd",
+            "type": "number"
+          },
+          "p95_duration_ms": {
+            "title": "P95 Duration Ms",
+            "type": "integer"
+          },
+          "p95_provider_latency_ms": {
+            "title": "P95 Provider Latency Ms",
+            "type": "integer"
+          },
+          "p95_queue_wait_ms": {
+            "title": "P95 Queue Wait Ms",
+            "type": "integer"
+          },
+          "proposals_approved": {
+            "title": "Proposals Approved",
+            "type": "integer"
+          },
+          "proposals_created": {
+            "title": "Proposals Created",
+            "type": "integer"
+          },
+          "proposals_expired": {
+            "title": "Proposals Expired",
+            "type": "integer"
+          },
+          "proposals_pending": {
+            "title": "Proposals Pending",
+            "type": "integer"
+          },
+          "proposals_rejected": {
+            "title": "Proposals Rejected",
+            "type": "integer"
+          },
+          "reconciliation_required": {
+            "title": "Reconciliation Required",
+            "type": "integer"
+          },
+          "retries": {
+            "title": "Retries",
+            "type": "integer"
+          },
+          "run_count": {
+            "title": "Run Count",
+            "type": "integer"
+          },
+          "runs_with_unsupported_citations": {
+            "title": "Runs With Unsupported Citations",
+            "type": "integer"
+          },
+          "tokens_in": {
+            "title": "Tokens In",
+            "type": "integer"
+          },
+          "tokens_out": {
+            "title": "Tokens Out",
+            "type": "integer"
+          },
+          "tool_calls": {
+            "title": "Tool Calls",
+            "type": "integer"
+          },
+          "tool_errors": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Tool Errors",
+            "type": "object"
+          },
+          "tool_outcomes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ToolOutcome"
+            },
+            "title": "Tool Outcomes",
+            "type": "object"
+          },
+          "total_cost_usd": {
+            "title": "Total Cost Usd",
+            "type": "number"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "window_from": {
+            "format": "date",
+            "title": "Window From",
+            "type": "string"
+          },
+          "window_to": {
+            "format": "date",
+            "title": "Window To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "window_from",
+          "window_to",
+          "days",
+          "truncated",
+          "run_count",
+          "completed",
+          "needs_review",
+          "failed",
+          "cancelled",
+          "in_flight",
+          "incomplete",
+          "by_incomplete_reason",
+          "by_error_code",
+          "mean_cost_usd",
+          "p95_cost_usd",
+          "total_cost_usd",
+          "mean_duration_ms",
+          "p95_duration_ms",
+          "mean_provider_latency_ms",
+          "p95_provider_latency_ms",
+          "p95_queue_wait_ms",
+          "tokens_in",
+          "tokens_out",
+          "retries",
+          "tool_calls",
+          "tool_outcomes",
+          "tool_errors",
+          "citations_cited",
+          "citations_unsupported",
+          "citation_support_ratio",
+          "runs_with_unsupported_citations",
+          "approval_rate",
+          "proposals_created",
+          "proposals_pending",
+          "proposals_approved",
+          "proposals_rejected",
+          "proposals_expired",
+          "executions_succeeded",
+          "executions_failed",
+          "reconciliation_required",
+          "feedback",
+          "by_model"
+        ],
+        "title": "MetricsSummary",
+        "type": "object"
+      },
+      "ModelBreakdown": {
+        "description": "Results are attributable only to (provider, model, prompt version) together.",
+        "properties": {
+          "mean_cost_usd": {
+            "title": "Mean Cost Usd",
+            "type": "number"
+          },
+          "model_name": {
+            "title": "Model Name",
+            "type": "string"
+          },
+          "p95_duration_ms": {
+            "title": "P95 Duration Ms",
+            "type": "integer"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "runs": {
+            "title": "Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provider",
+          "model_name",
+          "prompt_version",
+          "runs",
+          "mean_cost_usd",
+          "p95_duration_ms"
+        ],
+        "title": "ModelBreakdown",
+        "type": "object"
+      },
+      "OrderCounts": {
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "as_of",
+          "total",
+          "overdue"
+        ],
+        "title": "OrderCounts",
+        "type": "object"
+      },
+      "OrderDetail": {
+        "properties": {
+          "customer_name": {
+            "title": "Customer Name",
+            "type": "string"
+          },
+          "days_overdue": {
+            "title": "Days Overdue",
+            "type": "integer"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ShipmentEventView"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "followup_tasks": {
+            "items": {
+              "$ref": "#/components/schemas/FollowupTaskView"
+            },
+            "title": "Followup Tasks",
+            "type": "array"
+          },
+          "has_open_exception": {
+            "title": "Has Open Exception",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "investigations": {
+            "items": {
+              "$ref": "#/components/schemas/InvestigationRef"
+            },
+            "title": "Investigations",
+            "type": "array"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLineView"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "order_number": {
+            "title": "Order Number",
+            "type": "string"
+          },
+          "promised_date": {
+            "format": "date",
+            "title": "Promised Date",
+            "type": "string"
+          },
+          "record_version": {
+            "title": "Record Version",
+            "type": "integer"
+          },
+          "shipments": {
+            "items": {
+              "$ref": "#/components/schemas/ShipmentView"
+            },
+            "title": "Shipments",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "total_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Amount",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "order_number",
+          "customer_name",
+          "status",
+          "promised_date",
+          "days_overdue",
+          "total_amount",
+          "has_open_exception",
+          "evidence_id",
+          "record_version",
+          "lines",
+          "shipments",
+          "events",
+          "investigations",
+          "followup_tasks"
+        ],
+        "title": "OrderDetail",
+        "type": "object"
+      },
+      "OrderLineView": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "outstanding": {
+            "title": "Outstanding",
+            "type": "integer"
+          },
+          "product_name": {
+            "title": "Product Name",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "quantity_shipped": {
+            "title": "Quantity Shipped",
+            "type": "integer"
+          },
+          "sku": {
+            "title": "Sku",
+            "type": "string"
+          },
+          "unit_price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unit Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "product_name",
+          "quantity",
+          "quantity_shipped",
+          "outstanding",
+          "unit_price"
+        ],
+        "title": "OrderLineView",
+        "type": "object"
+      },
+      "OrderStatus": {
+        "enum": [
+          "open",
+          "partially_shipped",
+          "shipped",
+          "delivered",
+          "cancelled"
+        ],
+        "title": "OrderStatus",
+        "type": "string"
+      },
+      "OrderSummary": {
+        "properties": {
+          "customer_name": {
+            "title": "Customer Name",
+            "type": "string"
+          },
+          "days_overdue": {
+            "title": "Days Overdue",
+            "type": "integer"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "has_open_exception": {
+            "title": "Has Open Exception",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "order_number": {
+            "title": "Order Number",
+            "type": "string"
+          },
+          "promised_date": {
+            "format": "date",
+            "title": "Promised Date",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "total_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Amount",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "order_number",
+          "customer_name",
+          "status",
+          "promised_date",
+          "days_overdue",
+          "total_amount",
+          "has_open_exception",
+          "evidence_id"
+        ],
+        "title": "OrderSummary",
+        "type": "object"
+      },
+      "PolicyCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "citation_id": {
+            "maxLength": 80,
+            "title": "Citation Id",
+            "type": "string"
+          },
+          "relevance": {
+            "maxLength": 400,
+            "title": "Relevance",
+            "type": "string"
+          }
+        },
+        "required": [
+          "citation_id",
+          "relevance"
+        ],
+        "title": "PolicyCitation",
+        "type": "object"
+      },
+      "PolicyPassageView": {
+        "description": "One cited passage. ``text`` is untrusted document content, rendered as text.",
+        "properties": {
+          "effective_from": {
+            "format": "date",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "heading_path": {
+            "title": "Heading Path",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "title",
+          "version",
+          "heading_path",
+          "text",
+          "effective_from",
+          "effective_to"
+        ],
+        "title": "PolicyPassageView",
+        "type": "object"
+      },
+      "ProposedActionDraft": {
+        "additionalProperties": false,
+        "description": "What the model may *suggest*. It carries no authority and no execution path.\n\nNote what is absent: no organization id, no approver, no task id, no status. The\nbackend supplies every one of those. The model cannot address another tenant, and\ncannot claim an action happened.",
+        "properties": {
+          "action_type": {
+            "$ref": "#/components/schemas/ActionType",
+            "default": "create_followup_task"
+          },
+          "description": {
+            "maxLength": 500,
+            "title": "Description",
+            "type": "string"
+          },
+          "due_in_days": {
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Due In Days",
+            "type": "integer"
+          },
+          "rationale": {
+            "maxLength": 600,
+            "title": "Rationale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "due_in_days",
+          "rationale"
+        ],
+        "title": "ProposedActionDraft",
+        "type": "object"
+      },
+      "Role": {
+        "enum": [
+          "analyst",
+          "supervisor"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "RunBounds": {
+        "properties": {
+          "deadline_seconds": {
+            "title": "Deadline Seconds",
+            "type": "number"
+          },
+          "max_tool_calls": {
+            "title": "Max Tool Calls",
+            "type": "integer"
+          },
+          "max_turns": {
+            "title": "Max Turns",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "max_turns",
+          "max_tool_calls",
+          "deadline_seconds"
+        ],
+        "title": "RunBounds",
+        "type": "object"
+      },
+      "RunDetail": {
+        "properties": {
+          "can_cancel": {
+            "title": "Can Cancel",
+            "type": "boolean"
+          },
+          "cancel_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Requested At"
+          },
+          "cost_usd": {
+            "title": "Cost Usd",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "feedback": {
+            "items": {
+              "$ref": "#/components/schemas/FeedbackView"
+            },
+            "title": "Feedback",
+            "type": "array"
+          },
+          "feedback_ratings": {
+            "items": {
+              "$ref": "#/components/schemas/Usefulness"
+            },
+            "title": "Feedback Ratings",
+            "type": "array"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "has_proposal": {
+            "title": "Has Proposal",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incomplete_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IncompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "initiated_by_me": {
+            "title": "Initiated By Me",
+            "type": "boolean"
+          },
+          "initiated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initiated By Name"
+          },
+          "model_name": {
+            "title": "Model Name",
+            "type": "string"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "order_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Number"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Id"
+          },
+          "proposal_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "request_text": {
+            "title": "Request Text",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RunResultView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retry_count": {
+            "title": "Retry Count",
+            "type": "integer"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RunStepView"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "tokens_in": {
+            "title": "Tokens In",
+            "type": "integer"
+          },
+          "tokens_out": {
+            "title": "Tokens Out",
+            "type": "integer"
+          },
+          "tool_call_count": {
+            "title": "Tool Call Count",
+            "type": "integer"
+          },
+          "trace_pruned_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace Pruned At"
+          },
+          "turn_count": {
+            "title": "Turn Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "incomplete_reason",
+          "error_code",
+          "created_at",
+          "started_at",
+          "finished_at",
+          "duration_ms",
+          "cost_usd",
+          "tokens_in",
+          "tokens_out",
+          "turn_count",
+          "tool_call_count",
+          "retry_count",
+          "request_text",
+          "order_id",
+          "order_number",
+          "provider",
+          "model_name",
+          "prompt_version",
+          "initiated_by_name",
+          "initiated_by_me",
+          "has_proposal",
+          "proposal_status",
+          "feedback_ratings",
+          "can_cancel",
+          "cancel_requested_at",
+          "trace_pruned_at",
+          "result",
+          "steps",
+          "proposal_id",
+          "feedback"
+        ],
+        "title": "RunDetail",
+        "type": "object"
+      },
+      "RunResultView": {
+        "description": "The validated answer as persisted: the agent's schema plus its accounting.",
+        "properties": {
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "maxItems": 15,
+            "title": "Findings",
+            "type": "array"
+          },
+          "missing_information": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Missing Information",
+            "type": "array"
+          },
+          "policy_citations": {
+            "items": {
+              "$ref": "#/components/schemas/PolicyCitation"
+            },
+            "maxItems": 10,
+            "title": "Policy Citations",
+            "type": "array"
+          },
+          "proposed_action": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProposedActionDraft"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "maxLength": 1500,
+            "title": "Summary",
+            "type": "string"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "title": "RunResultView",
+        "type": "object"
+      },
+      "RunStatus": {
+        "enum": [
+          "queued",
+          "investigating",
+          "needs_review",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "title": "RunStatus",
+        "type": "string"
+      },
+      "RunStepView": {
+        "properties": {
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "ordinal": {
+            "title": "Ordinal",
+            "type": "integer"
+          },
+          "result_row_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Row Count"
+          },
+          "step_type": {
+            "title": "Step Type",
+            "type": "string"
+          },
+          "tokens_in": {
+            "title": "Tokens In",
+            "type": "integer"
+          },
+          "tokens_out": {
+            "title": "Tokens Out",
+            "type": "integer"
+          },
+          "tool_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Name"
+          }
+        },
+        "required": [
+          "ordinal",
+          "step_type",
+          "tool_name",
+          "latency_ms",
+          "tokens_in",
+          "tokens_out",
+          "result_row_count",
+          "error_code"
+        ],
+        "title": "RunStepView",
+        "type": "object"
+      },
+      "RunSummary": {
+        "properties": {
+          "can_cancel": {
+            "title": "Can Cancel",
+            "type": "boolean"
+          },
+          "cancel_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Requested At"
+          },
+          "cost_usd": {
+            "title": "Cost Usd",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "feedback_ratings": {
+            "items": {
+              "$ref": "#/components/schemas/Usefulness"
+            },
+            "title": "Feedback Ratings",
+            "type": "array"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "has_proposal": {
+            "title": "Has Proposal",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incomplete_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IncompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "initiated_by_me": {
+            "title": "Initiated By Me",
+            "type": "boolean"
+          },
+          "initiated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initiated By Name"
+          },
+          "model_name": {
+            "title": "Model Name",
+            "type": "string"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "order_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Number"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "proposal_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "request_text": {
+            "title": "Request Text",
+            "type": "string"
+          },
+          "retry_count": {
+            "title": "Retry Count",
+            "type": "integer"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "tokens_in": {
+            "title": "Tokens In",
+            "type": "integer"
+          },
+          "tokens_out": {
+            "title": "Tokens Out",
+            "type": "integer"
+          },
+          "tool_call_count": {
+            "title": "Tool Call Count",
+            "type": "integer"
+          },
+          "trace_pruned_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace Pruned At"
+          },
+          "turn_count": {
+            "title": "Turn Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "incomplete_reason",
+          "error_code",
+          "created_at",
+          "started_at",
+          "finished_at",
+          "duration_ms",
+          "cost_usd",
+          "tokens_in",
+          "tokens_out",
+          "turn_count",
+          "tool_call_count",
+          "retry_count",
+          "request_text",
+          "order_id",
+          "order_number",
+          "provider",
+          "model_name",
+          "prompt_version",
+          "initiated_by_name",
+          "initiated_by_me",
+          "has_proposal",
+          "proposal_status",
+          "feedback_ratings",
+          "can_cancel",
+          "cancel_requested_at",
+          "trace_pruned_at"
+        ],
+        "title": "RunSummary",
+        "type": "object"
+      },
+      "ShipmentEventView": {
+        "properties": {
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "evidence_id",
+          "event_type",
+          "occurred_at",
+          "note"
+        ],
+        "title": "ShipmentEventView",
+        "type": "object"
+      },
+      "ShipmentView": {
+        "properties": {
+          "carrier": {
+            "title": "Carrier",
+            "type": "string"
+          },
+          "delivered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivered At"
+          },
+          "estimated_delivery": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Delivery"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "shipped_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipped At"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "tracking_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracking Reference"
+          }
+        },
+        "required": [
+          "id",
+          "evidence_id",
+          "carrier",
+          "tracking_reference",
+          "status",
+          "shipped_at",
+          "estimated_delivery",
+          "delivered_at"
+        ],
+        "title": "ShipmentView",
+        "type": "object"
+      },
+      "SystemInfo": {
+        "properties": {
+          "agent_enabled": {
+            "title": "Agent Enabled",
+            "type": "boolean"
+          },
+          "app_env": {
+            "title": "App Env",
+            "type": "string"
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/RunBounds"
+          },
+          "business_date": {
+            "format": "date",
+            "title": "Business Date",
+            "type": "string"
+          },
+          "embedding_mode": {
+            "title": "Embedding Mode",
+            "type": "string"
+          },
+          "llm_model": {
+            "title": "Llm Model",
+            "type": "string"
+          },
+          "llm_provider": {
+            "title": "Llm Provider",
+            "type": "string"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "scripted_model": {
+            "title": "Scripted Model",
+            "type": "boolean"
+          },
+          "writes_enabled": {
+            "title": "Writes Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "app_env",
+          "llm_provider",
+          "llm_model",
+          "scripted_model",
+          "embedding_mode",
+          "prompt_version",
+          "business_date",
+          "writes_enabled",
+          "agent_enabled",
+          "bounds"
+        ],
+        "title": "SystemInfo",
+        "type": "object"
+      },
+      "TaskResponse": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "deduplicated": {
+            "default": false,
+            "title": "Deduplicated",
+            "type": "boolean"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "order_id": {
+            "format": "uuid",
+            "title": "Order Id",
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id",
+          "organization_id",
+          "order_id",
+          "idempotency_key",
+          "status",
+          "created_at"
+        ],
+        "title": "TaskResponse",
+        "type": "object"
+      },
+      "ToolOutcome": {
+        "properties": {
+          "error": {
+            "title": "Error",
+            "type": "integer"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ok",
+          "error"
+        ],
+        "title": "ToolOutcome",
+        "type": "object"
+      },
+      "Usefulness": {
+        "enum": [
+          "useful",
+          "partly",
+          "not_useful"
+        ],
+        "title": "Usefulness",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "ValidationView": {
+        "description": "Pre-strip citation accounting (ADR 0010).",
+        "properties": {
+          "citations_removed": {
+            "title": "Citations Removed",
+            "type": "integer"
+          },
+          "cited": {
+            "title": "Cited",
+            "type": "integer"
+          },
+          "findings_removed": {
+            "title": "Findings Removed",
+            "type": "integer"
+          },
+          "granted": {
+            "title": "Granted",
+            "type": "integer"
+          },
+          "supported_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supported Ratio"
+          },
+          "unsupported": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unsupported",
+            "type": "array"
+          }
+        },
+        "required": [
+          "cited",
+          "granted",
+          "unsupported",
+          "findings_removed",
+          "citations_removed",
+          "supported_ratio"
+        ],
+        "title": "ValidationView",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "OpsPilot API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/actions": {
+      "get": {
+        "description": "Analysts may read the queue; only supervisors may decide on it.",
+        "operationId": "list_actions_actions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status_filter",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ActionStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status Filter"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ActionView"
+                  },
+                  "title": "Response List Actions Actions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Actions",
+        "tags": [
+          "approval"
+        ]
+      }
+    },
+    "/actions/{action_id}": {
+      "get": {
+        "operationId": "get_action_actions__action_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "action_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Action Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Action",
+        "tags": [
+          "approval"
+        ]
+      }
+    },
+    "/actions/{action_id}/approve": {
+      "post": {
+        "description": "One transaction: re-read FOR UPDATE, evaluate ``domain.approval``, write the\napproval row, flip the status, insert the outbox event. Commit.\n\nThe Celery message is published by the dispatcher from the outbox \u2014 never from\ninside this request (ADR 0003).",
+        "operationId": "approve_actions__action_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "action_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Action Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "approval"
+        ]
+      }
+    },
+    "/actions/{action_id}/reject": {
+      "post": {
+        "description": "Rejection is terminal and produces no outbox event and no downstream effect.",
+        "operationId": "reject_actions__action_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "action_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Action Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject",
+        "tags": [
+          "approval"
+        ]
+      }
+    },
+    "/auth/dev/token": {
+      "post": {
+        "description": "Mint a token for a seeded membership.\n\nIt grants nothing an administrator has not already granted: the subject, role and\norganization all come from an existing ``memberships`` row. With no such row there\nis no token \u2014 and the refusal is a 404, matching how the rest of the API declines\nto confirm what exists.",
+        "operationId": "issue_dev_token_auth_dev_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DevTokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Issue Dev Token",
+        "tags": [
+          "dev only"
+        ]
+      }
+    },
+    "/documents": {
+      "get": {
+        "operationId": "list_documents_documents_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentView"
+                  },
+                  "title": "Response List Documents Documents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Documents",
+        "tags": [
+          "knowledge"
+        ]
+      },
+      "post": {
+        "description": "Validate multipart metadata, then read at most the limit plus one byte.\n\nHash the normalized content, create or reuse a version, then enqueue indexing.\n\nAn identical ``content_hash`` is a no-op that returns the existing version \u2014 that\nis what makes a retried upload safe.",
+        "operationId": "upload_document_documents_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_document_documents_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Document",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/documents/versions/{version_id}/chunks/{ordinal}": {
+      "get": {
+        "operationId": "read_citation_documents_versions__version_id__chunks__ordinal__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "ordinal",
+            "required": true,
+            "schema": {
+              "title": "Ordinal",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyPassageView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Citation",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/documents/{document_id}": {
+      "delete": {
+        "description": "Removes the document's chunks in the same transaction that marks it deleted.\n\nA deleted policy must be invisible to the very next retrieval. Tenant- and\ndeletion-visibility tests are a Week 3 gate.",
+        "operationId": "delete_document_documents__document_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Document",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/documents/{document_id}/retry": {
+      "post": {
+        "operationId": "retry_index_documents__document_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Retry Index Documents  Document Id  Retry Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Index",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "me_me_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/metrics/summary": {
+      "get": {
+        "description": "Analysts and supervisors see their own organization's numbers, nobody else's.",
+        "operationId": "summary_metrics_summary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 90,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Summary",
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/ops/tasks": {
+      "get": {
+        "description": "The reconciler's question: did this key ever produce a task?\n\nA definitive ``null`` means it is safe to retry with the same key. An error here is\n*not* a null \u2014 the caller must keep the action in ``reconciliation_required``.",
+        "operationId": "lookup_task_ops_tasks_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "idempotency_key",
+            "required": true,
+            "schema": {
+              "title": "Idempotency Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TaskResponse"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Lookup Task Ops Tasks Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lookup Task",
+        "tags": [
+          "ops (simulated ERP)"
+        ]
+      },
+      "post": {
+        "description": "Insert with ``ON CONFLICT (idempotency_key) DO NOTHING``, then read the row back.\n\nDoing it in that order is what makes two concurrent deliveries safe: the loser of\nthe race reads the winner's row and returns the same ``task_id`` with 200. Never\ncheck-then-insert \u2014 the gap between the two is exactly where the duplicate is born.",
+        "operationId": "create_task_ops_tasks_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Task",
+        "tags": [
+          "ops (simulated ERP)"
+        ]
+      }
+    },
+    "/orders": {
+      "get": {
+        "description": "``flagged_only`` keeps orders a carrier reported delayed or in exception;\n``q`` matches order number or customer name.",
+        "operationId": "list_orders_orders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "overdue_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Overdue Only",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "flagged_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Flagged Only",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OrderSummary"
+                  },
+                  "title": "Response List Orders Orders Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Orders",
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/counts": {
+      "get": {
+        "operationId": "order_counts_orders_counts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCounts"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Order Counts",
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "description": "A user in organization A requesting B's order id gets 404, never 403.\n\nThis is the Week 1 release gate. The repository raises ``ResourceNotFound`` for a\nrow outside the principal's organization, so the disclosure cannot happen here even\nif a future edit forgets about it \u2014 and the composite foreign keys mean it cannot\nhappen in the database either.",
+        "operationId": "get_order_orders__order_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Order",
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/runs": {
+      "get": {
+        "operationId": "list_runs_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status_filter",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RunStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status Filter"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunSummary"
+                  },
+                  "title": "Response List Runs Runs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "runs"
+        ]
+      },
+      "post": {
+        "description": "Reserve budget, persist the run as ``queued``, enqueue after commit.",
+        "operationId": "create_run_runs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Run",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/runs/{run_id}": {
+      "get": {
+        "description": "A run in another organization is a 404, never a 403.",
+        "operationId": "get_run_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/runs/{run_id}/cancel": {
+      "post": {
+        "description": "Cancels a queued run. An in-flight run stops at the orchestrator's next check.",
+        "operationId": "cancel_run_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Run",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/runs/{run_id}/feedback": {
+      "post": {
+        "operationId": "submit_feedback_runs__run_id__feedback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Submit Feedback Runs  Run Id  Feedback Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Feedback",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/system": {
+      "get": {
+        "operationId": "system_info_system_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Organization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "System Info",
+        "tags": [
+          "identity"
+        ]
+      }
+    }
+  }
+}

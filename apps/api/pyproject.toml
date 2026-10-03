@@ -1,0 +1,112 @@
+[project]
+name = "opspilot-api"
+version = "0.1.0"
+description = "OpsPilot — multi-tenant operations agent: API, agent orchestrator and workers"
+requires-python = ">=3.12"
+dependencies = [
+    # --- web ---------------------------------------------------------------
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "email-validator>=2.2.0",   # EmailStr, used by the dev token route
+    "pydantic-settings>=2.6.0",
+    "python-multipart>=0.0.12",      # document upload
+    "orjson>=3.10.0",
+    # --- data --------------------------------------------------------------
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14.0",
+    "psycopg[binary,pool]>=3.2.0",
+    "pgvector>=0.3.6",
+    # --- background --------------------------------------------------------
+    "celery[redis]>=5.4.0",
+    "redis>=5.2.0",
+    # --- identity ----------------------------------------------------------
+    "pyjwt[crypto]>=2.10.0",
+    # --- model providers ---------------------------------------------------
+    "openai>=1.57.0",
+    "anthropic>=0.40.0",
+    "tiktoken>=0.8.0",
+    "httpx>=0.28.0",
+    "tenacity>=9.0.0",
+    # --- observability -----------------------------------------------------
+    "structlog>=24.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "faker>=33.0.0",                 # deterministic seed generation
+    "respx>=0.22.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opspilot"]
+
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "DTZ", "T20", "SIM", "RUF", "ASYNC", "S"]
+ignore = [
+    "S101",   # assert is used for invariants that must never be reachable
+    "B008",   # FastAPI Depends() in defaults is the documented idiom
+    "RUF002", # en dashes in prose docstrings are deliberate, not typos
+    "RUF003", # ditto, in comments
+]
+
+[tool.ruff.lint.per-file-ignores]
+"migrations/*" = ["E501", "N999"]
+"tests/*" = ["S", "T20"]
+# The exception hierarchy reads as a sentence at the call site — "raise NotAuthorized",
+# "raise ResourceNotFound". An Error suffix on every one of them adds noise without
+# adding meaning, and the base class already says OpsPilotError.
+"src/opspilot/core/errors.py" = ["N818"]
+# __mapper_args__ is SQLAlchemy's declarative API, not a mutable class default.
+"src/opspilot/models/*" = ["RUF012"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["opspilot"]
+
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+# The domain layer carries the invariants; it is held to the strictest bar.
+[[tool.mypy.overrides]]
+module = "opspilot.domain.*"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["pgvector.*", "celery.*", "kombu.*", "tiktoken.*"]
+ignore_missing_imports = true
+
+# Celery's registration decorators are untyped; task bodies remain checked.
+[[tool.mypy.overrides]]
+module = "opspilot.workers.*"
+disallow_untyped_decorators = false
+
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+markers = [
+    "live_model: requires a real model provider and spends money; excluded from CI",
+]

@@ -1,0 +1,124 @@
+# Local development stack.
+# Production is a separate, standalone file: infra/compose/docker-compose.prod.yml
+# (ADR 0006; docs/runbooks/DEPLOY.md). Most local work uses `pnpm stack` instead.
+#
+#   docker compose up -d postgres redis     # data services only
+#   docker compose up -d                    # full stack
+#   docker compose run --rm migrate         # apply migrations
+#
+name: opspilot
+
+x-api-image: &api-image
+  build:
+    context: .
+    dockerfile: infra/docker/api.Dockerfile
+    target: dev
+  image: opspilot-api:dev
+  env_file: [.env]
+  # Inside the compose network the data services are reached by service name, not
+  # localhost. These override the host-oriented values in .env (environment wins over
+  # env_file), so one .env serves both host-run tooling and containerised processes.
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-opspilot}:${POSTGRES_PASSWORD:-opspilot}@postgres:5432/${POSTGRES_DB:-opspilot}
+    REDIS_URL: redis://redis:6379/0
+    CELERY_BROKER_URL: redis://redis:6379/1
+    CELERY_RESULT_BACKEND: redis://redis:6379/2
+    OPS_API_BASE_URL: http://api:8000/ops
+  volumes:
+    - ./apps/api:/app/apps/api
+    # Keep the image's Linux virtualenv: the bind mount above would otherwise
+    # replace it with the host's (on Windows, unusable) .venv directory.
+    - /app/apps/api/.venv
+    - ./data:/app/data
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-opspilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-opspilot}
+      POSTGRES_DB: ${POSTGRES_DB:-opspilot}
+    # Published only in local development; the production overlay removes it.
+    # Non-default host port: a developer machine often already runs Postgres on 5432,
+    # and Docker binds such a conflict silently rather than failing loudly.
+    ports: ["${POSTGRES_HOST_PORT:-55432}:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-opspilot} -d ${POSTGRES_DB:-opspilot}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    ports: ["${REDIS_HOST_PORT:-56379}:6379"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # One-shot. Runs to completion before api/workers are useful.
+  migrate:
+    <<: *api-image
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+
+  api:
+    <<: *api-image
+    command:
+      ["uvicorn", "opspilot.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health/live')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  worker-investigate:
+    <<: *api-image
+    command:
+      ["celery", "-A", "opspilot.workers.app:celery_app", "worker",
+       "-Q", "investigate", "-c", "2", "--max-tasks-per-child", "50", "-l", "info"]
+
+  # Concurrency 1: the write path is serialized per host on purpose.
+  worker-execute:
+    <<: *api-image
+    command:
+      ["celery", "-A", "opspilot.workers.app:celery_app", "worker",
+       "-Q", "execute,outbox", "-c", "1", "--max-tasks-per-child", "50", "-l", "info"]
+
+  beat:
+    <<: *api-image
+    command:
+      ["celery", "-A", "opspilot.workers.app:celery_app", "beat", "-l", "info",
+       "--schedule", "/tmp/celerybeat-schedule"]
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      target: dev
+    image: opspilot-web:dev
+    command: ["pnpm", "--filter", "@opspilot/web", "dev", "--host", "0.0.0.0"]
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    ports: ["5173:5173"]
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - web_node_modules:/app/node_modules
+
+volumes:
+  pgdata:
+  redisdata:
+  web_node_modules:

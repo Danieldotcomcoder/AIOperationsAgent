@@ -1,0 +1,28 @@
+{
+  "status": "draft_requires_human_labels",
+  "source_document": "data/policies/delayed-shipments.md",
+  "note": "AI-drafted question candidates, not hand-labeled ground truth. A human must review the corpus and enter expected passage quotes before a scored run. Broaden the corpus beyond this starter document before claiming general retrieval quality.",
+  "reviewed_by": null,
+  "cases": [
+    {"id": "R01", "query": "What should we do when a shipment is past its estimated delivery date?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R02", "query": "Who should provide an updated estimate for a late delivery?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R03", "query": "What must be recorded after contacting the carrier?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R04", "query": "When should the customer be told a revised delivery estimate?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R05", "query": "Can we promise a delivery date that the carrier has not confirmed?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R06", "query": "The ETA has passed but there is no proof of delivery. What is the next step?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R07", "query": "How do we communicate a confirmed new ETA to the customer?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R08", "query": "The carrier has not replied for two business days. What follow-up is permitted?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R09", "query": "Who must approve a supervisor follow-up task?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R10", "query": "Can an assistant create the follow-up task before human approval?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R11", "query": "What waiting period triggers proposing a supervisor follow-up?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R12", "query": "Does escalation count business days or calendar days?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R13", "query": "What should an investigation say when shipment records are incomplete?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R14", "query": "Can we assume an order shipped when no shipment evidence exists?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R15", "query": "Can we infer that goods arrived without delivery evidence?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R16", "query": "Which missing records should be called out in an uncertain investigation?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R17", "query": "A tracking update is missing. Should the analyst guess the delivery outcome?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R18", "query": "What evidence is needed before asserting that the order arrived?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R19", "query": "What is the process for escalating an unanswered carrier inquiry?", "expected_document_title": null, "expected_quote": null},
+    {"id": "R20", "query": "What must happen between proposing a follow-up and creating it?", "expected_document_title": null, "expected_quote": null}
+  ]
+}

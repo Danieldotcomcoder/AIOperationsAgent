@@ -1,0 +1,160 @@
+# Production stack for one small VPS (ARCHITECTURE §10, ADR 0006).
+#
+# Standalone: it does not extend the development compose file. Images are built off
+# the server and pulled by tag, so a rollback is "set the previous tag, up -d".
+#
+#   cp infra/compose/.env.production.example .env.production   # fill in on the VPS
+#   OPSPILOT_TAG=2026-10-03.1 docker compose -f infra/compose/docker-compose.prod.yml \
+#       --env-file .env.production run --rm migrate
+#   OPSPILOT_TAG=2026-10-03.1 docker compose -f infra/compose/docker-compose.prod.yml \
+#       --env-file .env.production up -d
+#
+# Only Caddy publishes ports (80/443). PostgreSQL and Redis sit on an internal network
+# that has no route in or out. API and workers join a second network for outbound
+# calls to the model provider; nothing on it is published except through Caddy.
+# See docs/runbooks/DEPLOY.md for deploy, rollback, backup and restore.
+
+name: opspilot
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "5" }
+
+x-app: &app
+  image: ${OPSPILOT_API_IMAGE:-opspilot-api}:${OPSPILOT_TAG:?set OPSPILOT_TAG to the image tag to run}
+  env_file: [../../.env.production]
+  environment:
+    APP_ENV: ${APP_ENV:-production}
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}
+    REDIS_URL: redis://redis:6379/0
+    CELERY_BROKER_URL: redis://redis:6379/1
+    CELERY_RESULT_BACKEND: redis://redis:6379/2
+    OPS_API_BASE_URL: http://api:8000/ops
+    LOG_FORMAT: json
+  restart: unless-stopped
+  logging: *logging
+  networks: [data, egress]
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  # Small VPS: cap memory so one runaway process cannot starve PostgreSQL.
+  mem_limit: 600m
+
+services:
+  caddy:
+    image: ${OPSPILOT_WEB_IMAGE:-opspilot-web}:${OPSPILOT_TAG:?}
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?}
+      ACME_EMAIL: ${ACME_EMAIL:?}
+      OIDC_ORIGIN: ${OIDC_ORIGIN:-https://*.auth0.com}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    restart: unless-stopped
+    logging: *logging
+    networks: [egress]
+    depends_on:
+      api: { condition: service_healthy }
+    mem_limit: 128m
+
+  # One-shot; run before every `up` that carries a new tag. Migrations stay
+  # backward compatible for one release (expand, migrate, contract) so the previous
+  # image keeps working against the migrated schema during a rollback.
+  migrate:
+    <<: *app
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+    profiles: ["migrate"]
+
+  api:
+    <<: *app
+    command: ["uvicorn", "opspilot.main:app", "--host", "0.0.0.0", "--port", "8000",
+              "--workers", "2", "--proxy-headers", "--forwarded-allow-ips", "*"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=2)"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  worker-investigate:
+    <<: *app
+    command: ["celery", "-A", "opspilot.workers.app:celery_app", "worker", "-Q", "investigate",
+              "-c", "2", "--max-tasks-per-child", "50", "-l", "info", "-n", "investigate@%h"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A opspilot.workers.app:celery_app inspect ping -d investigate@$$HOSTNAME -t 5 || exit 1"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+
+  # Concurrency 1: the write path is serialized per host on purpose.
+  worker-execute:
+    <<: *app
+    command: ["celery", "-A", "opspilot.workers.app:celery_app", "worker", "-Q", "execute,outbox",
+              "-c", "1", "--max-tasks-per-child", "50", "-l", "info", "-n", "execute@%h"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A opspilot.workers.app:celery_app inspect ping -d execute@$$HOSTNAME -t 5 || exit 1"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+
+  # Exactly one scheduler. Two would double every sweep (harmless, but wasteful).
+  beat:
+    <<: *app
+    command: ["celery", "-A", "opspilot.workers.app:celery_app", "beat", "-l", "info",
+              "--schedule", "/tmp/celerybeat-schedule"]
+    mem_limit: 256m
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:?}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+    networks: [data]
+    shm_size: 256m
+    mem_limit: 1g
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb",
+              "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+    networks: [data]
+    mem_limit: 320m
+
+networks:
+  # No route in or out: PostgreSQL and Redis are reachable only from app containers.
+  data:
+    internal: true
+  # Outbound to the model provider, and Caddy's path to the API.
+  egress: {}
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:
+  caddy_logs:
